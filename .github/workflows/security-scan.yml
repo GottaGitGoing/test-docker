@@ -1,0 +1,18 @@
+# .github/workflows/security-scan.yml
+name: My Security Scan
+on: [push, pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build image
+        run: docker build -f Dockerfile.level2 -t test-scan .
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'test-scan'
+          format: 'table'
+          exit-code: '1' # Fail CI on critical vulnerabilities
+          ignore-unfixed: true
