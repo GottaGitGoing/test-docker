@@ -1,0 +1,22 @@
+FROM alpine:3.19 AS builder
+
+LABEL org.opencontainers.image.source=https://github.com/gottagitgoing/test-docker
+LABEL org.opencontainers.image.description="Interview Prep: Level 1"
+LABEL org.opencontainers.image.licenses=MIT
+
+# pin version for reproducibility
+RUN apk add --no-cache bash
+
+# create non root user for security
+RUN addgroup -g 1001 appgroup && \
+    adduser -u 1001 -G appgroup -D appuser
+
+WORKDIR /app
+
+# Copy files with correct ownership
+COPY --chown=appuser:appgroup hello.txt ./
+
+USER appuser
+
+# RUN echo "Hello from my package!" > /hello.txt
+CMD ["cat", "hello.txt"]
